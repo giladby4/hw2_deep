@@ -72,7 +72,9 @@ class VanillaSGD(Optimizer):
             #  Update the gradient according to regularization and then
             #  update the parameters tensor.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            if self.reg !=0:
+                dp += self.reg*p
+            p -= self.learn_rate*dp
             # ========================
 
 
@@ -91,7 +93,9 @@ class MomentumSGD(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.velocities = {}
+        for p, dp in self.params:
+            self.velocities[p] = torch.zeros_like(p)
         # ========================
 
     def step(self):
@@ -103,7 +107,11 @@ class MomentumSGD(Optimizer):
             # update the parameters tensor based on the velocity. Don't forget
             # to include the regularization term.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            if self.reg !=0:
+                dp += self.reg*p
+            self.velocities[p] *= self.momentum
+            self.velocities[p] -= dp*self.learn_rate
+            p += self.velocities[p]
             # ========================
 
 
@@ -124,7 +132,9 @@ class RMSProp(Optimizer):
 
         # TODO: Add your own initializations as needed.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        self.rs = {}
+        for p, dp in self.params:
+            self.rs[p] = torch.zeros_like(p)
         # ========================
 
     def step(self):
@@ -137,5 +147,9 @@ class RMSProp(Optimizer):
             # average of it's previous gradients. Use it to update the
             # parameters tensor.
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            if self.reg !=0:
+                dp += self.reg*p
+            self.rs[p] *= self.decay
+            self.rs[p] += (1-self.decay)*(dp ** 2)
+            p -= (self.learn_rate / (torch.sqrt(self.rs[p]) + self.eps)) * dp
             # ========================
