@@ -80,8 +80,8 @@ class CNN(nn.Module):
         #  Note: If N is not divisible by P, then N mod P additional
         #  CONV->ACTs should exist at the end, without a POOL after them.
         # ====== YOUR CODE: ======
-        channel_list = list(in_channels)
-        channel_list.extend(self.channels)
+        channel_list = [in_channels] + self.channels
+
         for i in range(len(self.channels)):
             layers.append(
                 nn.Conv2d(in_channels=channel_list[i],
@@ -117,7 +117,10 @@ class CNN(nn.Module):
         #  - The last Linear layer should have an output dim of out_classes.
         mlp: MLP = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        dimentions = [*self.hidden_dims, self.out_classes]
+        nonlins = [ACTIVATIONS[self.activation_type](**self.activation_params) for _ in range(len(self.hidden_dims))]
+        nonlins.append(nn.Identity())
+        mlp = MLP(self._n_features(), dimentions, nonlins=nonlins)
         # ========================
         return mlp
 
@@ -127,7 +130,8 @@ class CNN(nn.Module):
         #  return class scores.
         out: Tensor = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        extracted_features = self.feature_extractor(x)
+        out = self.mlp(extracted_features.flatten(1))
         # ========================
         return out
 
