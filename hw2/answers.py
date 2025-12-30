@@ -43,7 +43,7 @@ def part2_overfit_hp():
     wstd, lr, reg = 0, 0, 0
     # TODO: Tweak the hyperparameters until you overfit the small dataset.
     # ====== YOUR CODE: ======
-    wstd, lr, reg = 0.1, 0.05, 0.001
+    wstd, lr, reg = 0.1, 0.05, 0
     # ========================
     return dict(wstd=wstd, lr=lr, reg=reg)
 
@@ -63,7 +63,7 @@ def part2_optim_hp():
     wstd, lr_vanilla, lr_momentum, lr_rmsprop, reg, = (
         0.1,
         0.005,
-        0.01,
+        0.005,
         0.0001,
         0.001,
     )
@@ -85,8 +85,8 @@ def part2_dropout_hp():
     # TODO: Tweak the hyperparameters to get the model to overfit without
     # dropout.
     # ====== YOUR CODE: ======
-    wstd = 1
-    lr = 0.005
+    wstd = 0.1
+    lr = 0.003
     # ========================
     return dict(wstd=wstd, lr=lr)
 
@@ -145,7 +145,10 @@ def part3_arch_hp():
     out_activation = "none"  # activation function to apply at the output layer
     # TODO: Tweak the MLP architecture hyperparameters.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    n_layers = 2
+    hidden_dims = 32
+    activation = "relu"
+    out_activation = "none"
     # ========================
     return dict(
         n_layers=n_layers,
@@ -167,7 +170,10 @@ def part3_optim_hp():
     #    What you returns needs to be a callable, so either an instance of one of the
     #    Loss classes in torch.nn or one of the loss functions from torch.nn.functional.
     # ====== YOUR CODE: ======
-    raise NotImplementedError()
+    loss_fn = torch.nn.CrossEntropyLoss()
+    lr = 0.01
+    weight_decay = 0.001
+    momentum = 0.9
     # ========================
     return dict(lr=lr, weight_decay=weight_decay, momentum=momentum, loss_fn=loss_fn)
 
