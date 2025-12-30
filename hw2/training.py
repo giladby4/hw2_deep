@@ -83,10 +83,10 @@ class Trainer(abc.ABC):
             #  - Use the train/test_epoch methods.
             #  - Save losses and accuracies in the lists above.
             # ====== YOUR CODE: ======
-            train_result = self.train_epoch(dl_train=dl_train)
+            train_result = self.train_epoch(dl_train=dl_train, verbose=verbose, **kw)
             train_loss.extend(train_result.losses)
             train_acc.append(train_result.accuracy)
-            test_result = self.test_epoch(dl_test=dl_test)
+            test_result = self.test_epoch(dl_test=dl_test, verbose=verbose, **kw)
             test_loss.extend(test_result.losses)
             test_acc.append(test_result.accuracy)
             actual_num_epochs += 1
@@ -326,10 +326,11 @@ class LayerTrainer(Trainer):
         #  - Calculate number of correct predictions (make sure it's an int,
         #    not a tensor) as num_correct.
         # ====== YOUR CODE: ======
-        self.optimizer.zero_grad()
         X = X.reshape(X.shape[0], -1)
         class_scores = self.model.forward(X)
         loss = self.loss(class_scores, y) 
+        
+        self.optimizer.zero_grad()
         dout = self.loss.backward()
         self.model.backward(dout)       
         self.optimizer.step()

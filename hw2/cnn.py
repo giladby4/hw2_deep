@@ -80,8 +80,16 @@ class CNN(nn.Module):
         #  Note: If N is not divisible by P, then N mod P additional
         #  CONV->ACTs should exist at the end, without a POOL after them.
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        channel_list = [in_channels] + self.channels
 
+        for i in range(len(self.channels)):
+            layers.append(
+                nn.Conv2d(in_channels=channel_list[i],
+                          out_channels=channel_list[i+1],
+                          **self.conv_params))
+            layers.append(ACTIVATIONS[self.activation_type](**self.activation_params))
+            if (i+1) % self.pool_every == 0:
+                layers.append(POOLINGS[self.pooling_type](**self.pooling_params))
         # ========================
         seq = nn.Sequential(*layers)
         return seq
@@ -95,7 +103,7 @@ class CNN(nn.Module):
         rng_state = torch.get_rng_state()
         try:
             # ====== YOUR CODE: ======
-            raise NotImplementedError()
+            return self.feature_extractor(torch.zeros(1,*self.in_size)).numel()
             # ========================
         finally:
             torch.set_rng_state(rng_state)
@@ -109,7 +117,10 @@ class CNN(nn.Module):
         #  - The last Linear layer should have an output dim of out_classes.
         mlp: MLP = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        dimentions = [*self.hidden_dims, self.out_classes]
+        nonlins = [ACTIVATIONS[self.activation_type](**self.activation_params) for _ in range(len(self.hidden_dims))]
+        nonlins.append(nn.Identity())
+        mlp = MLP(self._n_features(), dimentions, nonlins=nonlins)
         # ========================
         return mlp
 
@@ -119,7 +130,8 @@ class CNN(nn.Module):
         #  return class scores.
         out: Tensor = None
         # ====== YOUR CODE: ======
-        raise NotImplementedError()
+        extracted_features = self.feature_extractor(x)
+        out = self.mlp(extracted_features.flatten(1))
         # ========================
         return out
 
